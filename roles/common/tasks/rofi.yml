@@ -1,8 +1,14 @@
 ---
 - name: Creates tools directory
   file:
-    path: "{{ansible_env.HOME}}/tools"
+    path: "{{ ansible_env.HOME }}/tools"
     state: directory
+
+- name: installing rofi deps
+  become: yes
+  package: name={{ item }} state=present
+  with_items:
+    - libgtk-3-dev
 
 # flex libxkbcommon-dev libxkbcommon-x11-dev
 - name: clone rofi
@@ -10,4 +16,4 @@
     repo: 'https://github.com/davatorium/rofi.git'
     dest: "{{ ansible_env.HOME }}/tools/rofi"
 - name: install rofi
-  shell: cd ~/tools/rofi && mkdir build && cd build && ../configure && make && sudo make install
+  shell: cd ~/tools/rofi && autoreconf -i && cd build && ../configure && make && sudo make install
