@@ -1,4 +1,10 @@
 ---
+- name: unzip
+  package: name=unzip state=latest
+  become: yes
+
+- name: installing fnm
+  shell: curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash
 
 - name: installing node & npm
-  shell: source ~/.config/zsh/.zshrc && nvm install --lts executable=/bin/zsh
+  shell: source ~/.config/zsh/.zshrc && fnm install v10.13.0 && fnm default v10.13.0 executable=/bin/zsh

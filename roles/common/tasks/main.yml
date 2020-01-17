@@ -1,5 +1,6 @@
 ---
 
+# TODO
 # - name: add dropbox source
 #   become: yes
 #   shell: >
@@ -27,19 +28,22 @@
     - mousepad
     - feh
     - tidy
-    - dropbox
-    - autorandr
+    # - dropbox
+    # - autorandr
     - parcellite
     - openvpn
     - brightnessctl
     - xclip
     - blueman
 
+- name: disable openvpn at boot
+  become: yes
+  shell: "update-rc.d openvpn disable"
+
 - include: rofi.yml
 
 - name: install todotxt-machine
   shell: "{{ ansible_env.HOME }}/.local/bin/pip install --user --upgrade todotxt-machine"
 
-- name: disable openvpn at boot
-  become: yes
-  shell: "update-rc.d openvpn disable"
+- name: install autorandr
+  shell: "{{ ansible_env.HOME }}/.local/bin/pip install --user --upgrade autorandr"

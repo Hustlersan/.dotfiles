@@ -1,0 +1,34 @@
+---
+- name: check to see if php is already installed
+  command: "php7.4 --version"
+  ignore_errors: true
+  register: php74_is_installed
+  changed_when: false
+
+- block:
+  - name: Install PHP 7
+    package: name={{item}} state=latest
+    become: yes
+    with_items:
+      - php
+      - php-common
+      - php-mysql
+      - php-mcrypt
+      - php-mbstring
+      - php-json
+      - php-curl
+      - php-gd
+      - php-intl
+      - php-cli
+      - php-xml
+      - php-bz2
+      - mcrypt
+      - openssl
+      - php-imagick
+      - php-memcached
+      - php-redis
+      - php-xdebug
+      - php-zip
+      - php-ast
+
+  when: php74_is_installed.rc != 0

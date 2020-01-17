@@ -26,5 +26,6 @@
     state=link
   with_fileglob:
     - zsh/*
+    - zsh/.*
 
 - include: antibody.yml

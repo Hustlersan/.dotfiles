@@ -7,5 +7,5 @@
     - htop
     - ranger
 
-- name: installing purer-prompt
-  shell: source ~/.config/zsh/.zshrc && npm install -g purer-prompt executable=zsh
+# - name: installing purer-prompt
+#   shell: source ~/.config/zsh/.zshrc && npm install -g purer-prompt executable=zsh

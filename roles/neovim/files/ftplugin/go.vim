@@ -4,6 +4,8 @@ setlocal foldmethod=syntax
 setlocal foldlevel=1
 setlocal foldnestmax=1
 
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gD <Plug>(coc-type-definition)
 let b:ale_linters = ['gobuild', 'golangci-lint', 'revive']
 let g:ale_go_golangci_lint_package=1
 let b:local_golangci_file = getcwd().'/.golangci.yml'
