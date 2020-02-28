@@ -112,16 +112,16 @@ func (e *$1Error) Error() string {
 }$0
 endsnippet
 
-snippet ew "fmt.Errorf(%w)"
-fmt.Errorf("$2: %w", ${1:err})$0
+snippet ew "errors.Wrap(err, msg)"
+errors.Wrap(${1:err}, "$2")$0
 endsnippet
 
-snippet rew "return fmt.Errorf wrap"
-return fmt.Errorf("$2: %w", ${1:err})$0
+snippet ewf "errors.Wrapf()"
+errors.Wrapf(${1:err}, "$2", $1)$0
 endsnippet
 
-snippet ref "return fmt.Errorf"
-return ${1:$2, }fmt.Errorf("$3", $4)
+snippet rew "return errors.Wrap"
+return errors.Wrap(${1:err}, "$2")$0
 endsnippet
 
 snippet of "open file" b
@@ -131,4 +131,14 @@ endsnippet
 
 snippet ap= "append = "
 $1 = append($1, ${2: val})
+endsnippet
+
+snippet init "func init()"
+func init() {
+	$0
+}
+endsnippet
+
+snippet ve "var err error"
+var err error$0
 endsnippet

@@ -1,8 +1,10 @@
 augroup php
   au!
   au BufNewFile,BufRead *.phtml set ft=php.html
-  au BufNewFile,BufRead,BufWinEnter *Test.php exe ":UltiSnipsAddFiletypes php.phpunit"
-  au BufNewFile,BufRead,BufWinEnter *Spec.php exe ":UltiSnipsAddFiletypes php.php-phpspec"
+  " au BufNewFile,BufRead,BufWinEnter *Test.php exe ":UltiSnipsAddFiletypes php.phpunit"
+  " au BufNewFile,BufRead,BufWinEnter *Spec.php exe ":UltiSnipsAddFiletypes php.php-phpspec"
+  au BufWritePost *.php silent! !eval '[ -f ".git/hooks/ctags" ] && .git/hooks/ctags php' &
+  au BufNewFile,BufRead,BufEnter *.php set tags=.git/tags.php
 augroup END
 
 let g:php_folding = 1
@@ -11,7 +13,7 @@ set foldlevel=1
 set foldnestmax=2
 set nofoldenable
 
-setlocal tabstop=4 shiftwidth=4
+setlocal tabstop=2 shiftwidth=2 et
 
 
 nnoremap <buffer> gn :call phpactor#Navigate()<CR>
@@ -31,7 +33,7 @@ nnoremap <buffer> <leader>H :call PhpConstructorArgumentMagic2()<cr>
 nnoremap <buffer> <leader>rcc :call PhpConstructorArgumentMagic()<cr>:sleep 300m<cr>:e<cr>
 nnoremap <buffer> <leader>rmc :call PHPMoveClass()<cr>
 nnoremap <buffer> <leader>rmd :call PHPMoveDir()<cr>
-nnoremap <buffer> <m-p> :call phpactor#ContextMenu()<cr>
+nnoremap <buffer> <m-n> :call phpactor#ContextMenu()<cr>
 nnoremap <buffer> <leader>ric :call PHPModify("implement_contracts")<cr>
 nnoremap <buffer> <leader>rap :call PHPModify("add_missing_properties")<cr>
 nnoremap <buffer> <leader>rei :call PHPExtractInterface()<cr>
@@ -42,15 +44,21 @@ nnoremap <buffer> <leader>h :call UpdatePhpDocIfExists()<CR>
 nnoremap <buffer> <leader>rdo :call PhpDocOneliner()<cr>
 
 
-" let g:ale_php_phpcbf_standard='PSR2'
+let b:ale_linters = ['php', 'phpmd', 'phpcs', 'phpstan']
+let g:ale_php_phpstan_executable = 'vendor/bin/phpstan'
+let g:ale_php_phpstan_configuration = 'phpstan.neon'
+let g:ale_php_phpstan_level = 'max'
+let g:ale_php_phpcbf_standard='~/.phpcs.xml'
+let g:ale_php_phpcbf_standard='~/.phpcs.xml'
 " let g:ale_php_phpcbf_standard='Symfony'
-" let g:ale_php_phpcs_standard='phpcs.xml.dist'
-" let g:ale_php_phpmd_ruleset='phpmd.xml'
+let g:ale_php_phpcs_standard='~/.phpcs.xml'
+let g:ale_php_phpmd_ruleset='~/.phpmd.xml'
 let g:ultisnips_php_scalar_types = 1
 let g:PHP_removeCRwhenUnix = 1
-let g:php_manual_online_search_shortcut = '<leader>m'
 
-" nnoremap <buffer> <m-a> :call SymfonySwitchToAlternateFile()<cr> " set via projects.public.vim
+ " set via projects.public.vim
+" nnoremap <buffer> <m-a> :call SwitchBetweenFiles('php', 'tests/', 'src/', 'Test')<cr>
+nnoremap <buffer> <m-a> :call SymfonySwitchToAlternateFile()<cr>
 " nnoremap <buffer> <leader>tsa <c-w>v:call SymfonySwitchToAlternateFile()<cr>
 
 function! PHPUnitSetupMethod()
@@ -289,27 +297,34 @@ endfunction
 " sut:  src/Acme/Bundle/Service/MyService.php
 " test: src/Acme/Bundle/Tests/Service/MyServiceTest.php
 
+let g:prefix_dir = 'tests'
 if !exists("*SymfonySwitchToAlternateFile")
   function! SymfonySwitchToAlternateFile()
+    if !exists("g:prefix_dir")
+        let g:prefix_dir = ''
+    endif
     let l:f = expand('%')
     if !exists("g:switch_alternate_dirs_to_keep")
       let g:switch_alternate_dirs_to_keep = 2
     endif
-    let l:is_test = expand('%:t') =~ "Test\."
-    if l:is_test
+    if expand('%:t') =~ "Test\."
       " remove phpunit_testroot
-      let l:f = substitute(l:f, 'Tests/','','')
+      let l:f = substitute(l:f, 'tests/','src/','')
       " remove 'Test.' from filename
       let l:f = substitute(l:f,'Test\.','.','')
     else
       let l:pathParts = split(expand('%:r'), '/')
       let l:startingPath = l:pathParts[0:g:switch_alternate_dirs_to_keep]
       let l:endPath = l:pathParts[(g:switch_alternate_dirs_to_keep+1):]
-      let l:combinedPath = l:startingPath + ['Tests'] + l:endPath
+      let l:combinedPath = l:startingPath + ['tests'] + l:endPath
+      if g:prefix_dir != ''
+          let l:startingPath = l:pathParts[1:]
+          let l:combinedPath = [g:prefix_dir] + l:startingPath
+      endif
       let l:f = join(l:combinedPath, '/') . 'Test.php'
       if !filereadable(l:f)
         let l:new_dir = substitute(l:f, '/\w\+\.php', '', '')
-        exe ":!mkdir -p ".l:new_dir
+        exe ":silent !mkdir -p ".l:new_dir
       endif
     endif
     " is there window with alternate file open?

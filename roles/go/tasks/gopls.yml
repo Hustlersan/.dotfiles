@@ -16,6 +16,6 @@
       repo: 'https://github.com/golang/tools.git'
       dest: "{{ ansible_env.HOME }}/tools/golang_tools"
   - name: install gopls
-    shell: cd ~/tools/golang_tools/cmd/gopls && go install
+    shell: cd ~/tools/golang_tools/gopls && go install
 
   when: gopls_installed.rc != 0

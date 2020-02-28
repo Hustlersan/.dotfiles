@@ -11,9 +11,5 @@
     - libgtk-3-dev
 
 # flex libxkbcommon-dev libxkbcommon-x11-dev
-- name: clone rofi
-  git:
-    repo: 'https://github.com/davatorium/rofi.git'
-    dest: "{{ ansible_env.HOME }}/tools/rofi"
-- name: install rofi
-  shell: cd ~/tools/rofi && autoreconf -i && cd build && ../configure && make && sudo make install
+
+# TODO: config

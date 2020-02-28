@@ -35,6 +35,7 @@
     - brightnessctl
     - xclip
     - blueman
+    - graphviz
 
 - name: disable openvpn at boot
   become: yes

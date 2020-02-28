@@ -1,13 +1,18 @@
 {
   "languageserver": {
     "intelephense": {
-            "command": "intelephense",
-            "args": ["--stdio"],
-            "filetypes": ["php"],
-            "initializationOptions": {
-                "storagePath": "/tmp/intelephense"
-            }
-        }
+      "command": "intelephense",
+      "args": ["--stdio"],
+      "filetypes": ["php"],
+      "initializationOptions": {
+        "storagePath": "/tmp/intelephense"
+      }
+    },
+    "terraform": {
+      "command": "terraform-lsp",
+      "filetypes": ["terraform"],
+      "initializationOptions": {}
+    }
   },
   "suggest.snippetIndicator": " ►",
   "suggest.echodocSupport": false,
@@ -23,6 +28,10 @@
   "diagnostic.refreshOnInsertMode": true,
   "diagnostic.virtualText": true,
   "html.format.enable": true,
+  "html.validate.html": true,
+  "html.validate.styles": true,
+  "html.validate.scripts": true,
+  "html.filetypes": ["html", "handlebars", "htmldjango", "html.twig"],
   "coc.preferences.hoverTarget": "float",
   "signature.preferShownAbove": false,
   "signature.hideOnTextChange": true,
@@ -35,13 +44,64 @@
     "https://raw.githubusercontent.com/awslabs/goformation/master/schema/cloudformation.schema.json": "/*",
     "https://raw.githubusercontent.com/softprops/serverless-yml-schema/master/serverless-schema.json": "/serverless.yaml",
     "http://json.schemastore.org/circleciconfig": "/.circleci/config.yml",
+    "http://json.schemastore.org/github-workflow": "/.github/*.yml",
     "https://raw.githubusercontent.com/docker/compose/master/compose/config/config_schema_v3.0.json": "/docker-compose*.yml",
     "kubernetes": "/*.yaml"
   },
-  "yaml.customTags": ["!And scalar", "!And mapping", "!And sequence", "!If scalar", "!If mapping", "!If sequence", "!Not scalar", "!Not mapping", "!Not sequence", "!Equals scalar", "!Equals mapping", "!Equals sequence", "!Or scalar", "!Or mapping", "!Or sequence", "!FindInMap scalar", "!FindInMap mappping", "!FindInMap sequence", "!Base64 scalar", "!Base64 mapping", "!Base64 sequence", "!Cidr scalar", "!Cidr mapping", "!Cidr sequence", "!Ref scalar", "!Ref mapping", "!Ref sequence", "!Sub scalar", "!Sub mapping", "!Sub sequence", "!GetAtt scalar", "!GetAtt mapping", "!GetAtt sequence", "!GetAZs scalar", "!GetAZs mapping", "!GetAZs sequence", "!ImportValue scalar", "!ImportValue mapping", "!ImportValue sequence", "!Select scalar", "!Select mapping", "!Select sequence", "!Split scalar", "!Split mapping", "!Split sequence", "!Join scalar", "!Join mapping", "!Join sequence"],
+  "yaml.customTags": [
+    "!And scalar",
+    "!And mapping",
+    "!And sequence",
+    "!If scalar",
+    "!If mapping",
+    "!If sequence",
+    "!Not scalar",
+    "!Not mapping",
+    "!Not sequence",
+    "!Equals scalar",
+    "!Equals mapping",
+    "!Equals sequence",
+    "!Or scalar",
+    "!Or mapping",
+    "!Or sequence",
+    "!FindInMap scalar",
+    "!FindInMap mappping",
+    "!FindInMap sequence",
+    "!Base64 scalar",
+    "!Base64 mapping",
+    "!Base64 sequence",
+    "!Cidr scalar",
+    "!Cidr mapping",
+    "!Cidr sequence",
+    "!Ref scalar",
+    "!Ref mapping",
+    "!Ref sequence",
+    "!Sub scalar",
+    "!Sub mapping",
+    "!Sub sequence",
+    "!GetAtt scalar",
+    "!GetAtt mapping",
+    "!GetAtt sequence",
+    "!GetAZs scalar",
+    "!GetAZs mapping",
+    "!GetAZs sequence",
+    "!ImportValue scalar",
+    "!ImportValue mapping",
+    "!ImportValue sequence",
+    "!Select scalar",
+    "!Select mapping",
+    "!Select sequence",
+    "!Split scalar",
+    "!Split mapping",
+    "!Split sequence",
+    "!Join scalar",
+    "!Join mapping",
+    "!Join sequence"
+  ],
   "json.schemas": [
     { "http://json.schemastore.org/composer": "/composer.json" },
-    { "http://json.schemastore.org/package": "/package.json" }
+    { "http://json.schemastore.org/package": "/package.json" },
+    { "http://json.schemastore.org/cloudbuild": "/cloudbuild.json" }
   ],
   "java.errors.incompleteClasspath.severity": "ignore",
   "java.implementationsCodeLens.enabled": true,
@@ -64,15 +124,18 @@
       "expand": true
     }
   ],
-  "explorer.file.columns": ["selection", "clip", "indent", "icon", "filename"],
+  "explorer.file.child.template": "[selection | clip | 1] [indent][icon | 1] [filename omitCenter 1] [linkIcon & 1][link growRight 1 omitCenter 5]",
   "explorer.keyMappings": {
     "u": "gotoParent"
   },
-  "go.enable":  true,
+  "explorer.previewAction.onHover": false,
+  "go.enable": true,
   "go.goplsOptions": {
     "usePlaceholders": true,
     "completeUnimported": true,
     "deepCompletion": true
   },
-  "go.goplsPath": "~/code/go/bin/gopls"
+  "go.goplsPath": "~/code/go/bin/gopls",
+  "codeLens.enable": true,
+  "xml.java.home": "/usr/lib/jvm/java-11-openjdk-amd64"
 }

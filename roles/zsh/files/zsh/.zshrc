@@ -1,24 +1,36 @@
+export TERM=rxvt-unicode-256color
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config//zsh//.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block, everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # zmodload zsh/zprof
 
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!.git/" -g "!node_modules" -g "!*/vendor/*" -g "!assets/" -g "!composer.lock" 2> /dev/null'
 
-if [[ ! -n $TMUX ]]; then
-  # get the IDs
-  ID="`tmux list-sessions`"
-  if [[ -z "$ID" ]]; then
-    tmux new-session
-  fi
-  create_new_session="Create New Session"
-  ID="$ID\n${create_new_session}:"
-  ID="`echo $ID | fzf | cut -d: -f1`"
-  if [[ "$ID" = "${create_new_session}" ]]; then
-    tmux new-session
-  elif [[ -n "$ID" ]]; then
-    tmux attach-session -t "$ID"
-  else
-    :  # Start terminal normally
-  fi
-fi
+export FZF_BIN_PATH="$HOME/.fzf/bin"
+
+# if [[ ! -n $TMUX ]]; then
+#   # get the IDs
+#   ID="`tmux list-sessions`"
+#   if [[ -z "$ID" ]]; then
+#     tmux new-session
+#   fi
+#   create_new_session="Create New Session"
+#   ID="$ID\n${create_new_session}:"
+#   ID="`echo $ID | fzf | cut -d: -f1`"
+#   if [[ "$ID" = "${create_new_session}" ]]; then
+#     tmux new-session
+#   elif [[ -n "$ID" ]]; then
+#     tmux attach-session -t "$ID"
+#   else
+#     :  # Start terminal normally
+#   fi
+# fi
+
+# todo: why do i need to set this to get proper colors
 
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 
@@ -40,7 +52,7 @@ export VISUAL=$EDITOR
 [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 export GOPATH="$HOME/code/go"
 export LGOBIN="$HOME/code/go/bin"
-export FZF_BIN_PATH="$HOME/.fzf/bin"
+export PATH=$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.composer/vendor/bin:$FZF_BIN_PATH:$LGOBIN:$HOME/.config/composer/vendor/bin:$HOME/.config/nvim/plugged/phpactor/bin:$HOME/.gem/ruby/2.5.0/bin
 
 HISTSIZE='100000';
 HISTFILESIZE="${HISTSIZE}";
@@ -90,7 +102,7 @@ export MANPAGER='less -X';
 alias update_antibody="antibody bundle < $XDG_CONFIG_HOME/zsh/antibody_plugins.txt  > $XDG_CONFIG_HOME/zsh/cached_plugins.sh; antibody update"
 
 alias sdn='sudo shutdown now -h'
-alias update='sudo apt-fast update && sudo apt-fast -y upgrade; update_antibody; cd ~/tools/golang_tools/ && gl && cd cmd/gopls/ && go install; n +PU'
+alias update='sudo apt-fast update && sudo apt-fast -y upgrade; update_antibody; cd ~/tools/golang_tools/ && gl && cd gopls/ && go install; n +PU'
 alias agi='sudo apt-fast install'
 
 alias vu='vagrant up'
@@ -117,10 +129,10 @@ alias grep='grep --color'
 alias cat='bat --plain'
 
 # disable c-s and c-q freeze
-stty stop ''
-stty start ''
-stty -ixon
-stty -ixoff
+# stty stop ''
+# stty start ''
+# stty -ixon
+# stty -ixoff
 
 # show branches ordered by last commit date
 alias gb="git for-each-ref --sort=committerdate refs/heads/ --format='%(committerdate:short) %(refname:short)'"
@@ -172,6 +184,8 @@ alias 7='cd -7'
 alias 8='cd -8'
 alias 9='cd -9'
 
+alias asciicast2gif='docker run --rm -v $PWD:/data asciinema/asciicast2gif'
+
 function git_current_branch() {
   local ref
   ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null)
@@ -204,7 +218,7 @@ fo() {
 }
 
 
-gbf() {
+b() {
   local branches branch
   branches=$(git for-each-ref --count=90 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
   branch=$(echo "$branches" |
@@ -293,7 +307,9 @@ alias cu='composer update --no-progress --prefer-dist --profile'
 alias efg='exercism download --track=go'
 alias es='exercism submit'
 alias eg='cd $HOME/code/exercism/go/$(ls -t $HOME/code/exercism/go/ | head -1)'
-alias gtb='go test -bench .'
+alias gtb='go test -bench=. -benchmem -cpuprofile cprofile.out -memprofile mprofile.out'
+alias cprof='go tool pprof -http=":9001" cprofile.out'
+alias mprof='go tool pprof -http=":9001" mprofile.out'
 alias gt='richgo test ./...'
 
 alias ez='n $ZDOTDIR/.zshrc;source $ZDOTDIR/.zshrc'
@@ -344,7 +360,7 @@ compdef _tmuxinator tmuxinator mux
 
 alias m='~/.tmux/mux.sh'
 alias mux='tmuxinator'
-
+alias tmux='tmux -2'
 alias tm='todotxt-machine'
 alias tnn='n ~/Dropbox/todo/work/todo.txt'
 alias tn='n ~/Dropbox/todo/todo.txt'
@@ -411,8 +427,7 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export PATH=$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.composer/vendor/bin:$FZF_BIN_PATH:$LGOBIN:$HOME/.config/composer/vendor/bin:$HOME/.config/nvim/plugged/phpactor/bin
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 
 
 # fnm
@@ -420,3 +435,16 @@ export PATH=~/.fnm:$PATH
 eval "`fnm env --multi`"
 
 # zprof
+source ~/.powerlevel10k/powerlevel10k.zsh-theme
+
+# To customize prompt, run `p10k configure` or edit ~/.config//zsh//.p10k.zsh.
+[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/jan/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/home/jan/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/jan/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/jan/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+# To customize prompt, run `p10k configure` or edit ~/.config//zsh//.p10k.zsh.
+[[ ! -f ~/.config//zsh//.p10k.zsh ]] || source ~/.config//zsh//.p10k.zsh

@@ -58,12 +58,14 @@ Plug 'aklt/plantuml-syntax', {'for': 'uml'}
 
 let g:scratch_auto_height = 1
 let g:scratch_persistence_file = '.scratch.vim'
-Plug '~/code/scratch.vim', {'on': ['Scratch', 'ScratchPreview']}
+Plug 'mtth/scratch.vim', {'on': ['Scratch', 'ScratchPreview']}
+" Plug '~/code/scratch.vim', {'on': ['Scratch', 'ScratchPreview']}
 nnoremap <m-z> :Scratch<cr>
 nnoremap <leader>z :ScratchPreview<cr>
 
 "" coc.nvim
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 inoremap <silent><expr> <TAB>
             \ pumvisible() ? "\<C-n>" :
             \ <SID>check_back_space() ? "\<TAB>" :
@@ -87,6 +89,7 @@ nmap <silent> gr <Plug>(coc-references)
 nmap <leader>gr <Plug>(coc-rename)
 " vmap <leader>gf <Plug>(coc-format-selected)
 nmap <leader>R <Plug>(coc-refactor)
+nmap <leader>o <Plug>(coc-codelens-action)
 
 nnoremap <silent> <leader>D  :<C-u>CocList -I symbols<cr>
 nnoremap <silent> <leader>d  :<C-u>CocList outline<cr>
@@ -106,23 +109,51 @@ omap af <Plug>(coc-funcobj-a)
 
 "" php
 Plug 'phux/php-doc-modded', {'for': 'php'}
+let g:vim_php_use_sort='alpha'
 Plug 'sahibalejandro/vim-php', {'for': ['php', 'yaml']}
+let g:php_manual_online_search_shortcut = '<leader>m'
 Plug 'alvan/vim-php-manual', {'for': 'php'}
 let g:vim_php_refactoring_use_default_mapping = 0
 Plug 'adoy/vim-php-refactoring-toolbox', {'for': 'php'}
 Plug 'phpactor/phpactor', {'for': 'php', 'do': ':call phpactor#Update()'}
-Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+" Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 
 "" go
-Plug 'arp242/gopher.vim', {'for': 'go'}
-let g:gopher_map = 0
-Plug 'tenfyzhong/reftools.vim', {'for': 'go'}
+let g:go_def_mapping_enabled = 0
+let g:go_code_completion_enabled = 0
+let g:go_fmt_autosave = 0
+let g:go_mod_fmt_autosave = 0
+let g:go_doc_keywordprg_enabled = 0
+let g:go_gopls_enabled = 0
+let g:go_addtags_transform = 'snakecase'
+let g:go_doc_keywordprg_enabled = 0
+let g:go_echo_go_info = 0
+
+let g:go_highlight_extra_types = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_variable_assignments = 1
+" let g:go_highlight_variable_declarations = 1
+" let g:go_highlight_format_strings = 1
+" let g:go_highlight_generate_tags = 1
+" let g:go_highlight_types=1
+let g:go_highlight_functions=1
+" let g:go_highlight_function_calls=1
+let g:go_highlight_function_parameters=1
+let g:go_highlight_fields=1
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+" Plug 'arp242/gopher.vim', {'for': 'go'}
+" let g:gopher_map = 0
+" Plug 'tenfyzhong/reftools.vim', {'for': 'go'}
 Plug 'sebdah/vim-delve', {'for': 'go'}
 Plug 'godoctor/godoctor.vim', {'for': 'go', 'on': 'Refactor'}
 Plug 'rhysd/vim-go-impl', {'for': 'go'}
 " Plug 'mattn/vim-goimpl', {'for': 'go'}
 "" fzf
-Plug 'tweekmonster/fzf-filemru', {'on': 'FilesMru'}
+let g:fzf_filemru_bufwrite=1
+Plug 'tweekmonster/fzf-filemru', {'on': ['FilesMru', 'ProjectMru']}
+" Plug '~tools/fzf-filemru', {'on': ['FilesMru', 'ProjectMru']}
+let g:fzf_mru_relative=1
+let g:fzf_mru_no_sort=1
 Plug 'zackhsi/fzf-tags', {'on': '<Plug>(fzf_tags)'}
 nnoremap <C-]> mO<Plug>(fzf_tags)
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -135,11 +166,12 @@ let g:fzf_buffers_jump = 1
 let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
 
 nnoremap <leader><tab> :Buffers<cr>
-nnoremap <leader>, :FilesMru<cr>
-nnoremap <leader>. :FZFAllFiles<cr>
+" nnoremap <leader>, :FilesMru --tiebreak=end<cr>
+nnoremap <leader>, :ProjectMru --tiebreak=end<cr>
+nnoremap <leader>. :Files<cr>
 nnoremap <leader><enter> :Tags<cr>
 nnoremap <leader>a mO:Rg<space>
-nnoremap <leader>A mO:let @/=expand('<cword>')<cr> :RgRaw --fixed-strings -t
+nnoremap <leader>A mO:Find<space>
 nnoremap <m-r> mO:exec "Rg ".expand("<cword>")<cr>
 vnoremap <m-r> mO"hy:exec "Find ".escape('<C-R>h', "/\.*$^~[()")<cr>
 nnoremap <m-s-r> mO:exec "Find ".expand("<cword>")<cr>
@@ -147,7 +179,9 @@ nnoremap <m-s-r> mO:exec "Find ".expand("<cword>")<cr>
 """ fzf commands
 let g:rg_command = '
             \ rg --column --line-number --no-heading --smart-case --hidden --follow --color "always"
-            \ -g "!{.git,node_modules,vendor}/*" '
+            \ -g "!.git" -g "!node_modules" -g "!*/vendor/*" -g "!assets/" -g "!composer.lock" '
+let g:rg_command_all = '
+            \ rg --column --line-number --no-heading -i --hidden --no-ignore --follow --color "always" '
 
 command! -bang -nargs=* RgRaw
       \ call fzf#vim#grep(
@@ -164,15 +198,32 @@ command! -bang -nargs=* Rg
       \           : fzf#vim#with_preview('right:50%:hidden', '?'),
       \   <bang>0)
 
-command! -bang -nargs=* Find call fzf#vim#grep(g:rg_command.'--no-ignore '.shellescape(<q-args>), 1, <bang>0)
+command! -bang -nargs=* Find call fzf#vim#grep(g:rg_command_all.' '.shellescape(<q-args>), 1, <bang>0)
 
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, {'options': ['--info=inline', '--preview', '~/.config/nvim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
 command! -bang -nargs=* FZFAllFiles call fzf#run({'source': 'find * -type f', 'sink': 'e'})
+" command! -bang -nargs=? -complete=dir Files
+"     \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline']}, <bang>0)
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
 "" UI
 
 Plug 'ap/vim-buftabline'
 let g:buftabline_show = 1 " display only if more than 1 buffer open
 
 Plug 'arcticicestudio/nord-vim'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'ikaros/smpl-vim'
+Plug 'ayu-theme/ayu-vim'
 
 Plug 'etdev/vim-hexcolor', {'for': ['css']}
 
@@ -234,9 +285,10 @@ endfunction
 Plug 'reedes/vim-lexical'
 Plug 'plasticboy/vim-markdown', {'for': ['markdown'], 'as': 'vim-markdown-plasticboy'}
 Plug 'tpope/vim-markdown', {'for': 'markdown'}
+Plug 'mzlogin/vim-markdown-toc'
 
 """ markdown preview
-Plug 'iamcco/markdown-preview.nvim', { 'for': ['markdown'],  'do': 'cd app & yarn install'  }
+Plug 'iamcco/markdown-preview.nvim', { 'for': ['markdown', 'notes'],  'do': 'cd app & yarn install'  }
 let g:mkdp_path_to_chrome = 'chromium-browser'
 let g:mkdp_auto_close = 1
 let g:mkdp_auto_start = 0
@@ -253,6 +305,14 @@ Plug 'wellle/targets.vim'
 
 " quickfix improvements
 let g:qf_auto_resize = 1
+
+let g:obvious_resize_default = 5
+let g:obvious_resize_run_tmux = 1
+noremap <silent> <C-Up> :<C-U>ObviousResizeUp<CR>
+noremap <silent> <C-Down> :<C-U>ObviousResizeDown<CR>
+noremap <silent> <C-Left> :<C-U>ObviousResizeLeft<CR>
+noremap <silent> <C-Right> :<C-U>ObviousResizeRight<CR>
+Plug 'talek/obvious-resize'
 
 Plug 'majutsushi/tagbar', {'on': 'TagbarOpenAutoClose'}
 nnoremap <leader>; :TagbarOpenAutoClose<cr>
@@ -283,7 +343,28 @@ let g:EasyMotion_use_smartsign_us = 1 " US layout
 " let g:NERDTreeAutoDeleteBuffer=1
 " nnoremap <leader>n :NERDTreeToggle<cr>
 " nnoremap <leader>N :NERDTreeFind<cr>
-nnoremap <leader>n :CocCommand explorer<cr>
+nnoremap <leader>n :CocCommand explorer --preset simplify<cr>
+let g:coc_explorer_global_presets = {
+\   '.vim': {
+\      'root-uri': '~/.vim',
+\   },
+\   'floating': {
+\      'position': 'floating',
+\   },
+\   'floatingLeftside': {
+\      'position': 'floating',
+\      'floating-position': 'left-center',
+\      'floating-width': 50,
+\   },
+\   'floatingRightside': {
+\      'position': 'floating',
+\      'floating-position': 'left-center',
+\      'floating-width': 50,
+\   },
+\   'simplify': {
+\     'file.child.template': '[selection | clip | 1] [indent][icon | 1] [filename omitCenter 1]'
+\   }
+\ }
 
 """ netrw
 " Plug 'justinmk/vim-dirvish', {'on': 'Expl'}
@@ -301,7 +382,9 @@ Plug 'wellle/tmux-complete.vim'
 
 """ ferret
 let g:FerretHlsearch=1
-Plug 'wincent/ferret', {'on': 'Ack'}
+Plug 'wincent/ferret'
+
+command! -nargs=1 PA args `=systemlist(<q-args>)`
 nnoremap <leader>/ :Ack <c-r><c-w><cr>
 nnoremap <leader>rip :Acks /<c-r><c-w>/<c-r><c-w>/gc<left><left><left>
 
@@ -325,7 +408,8 @@ nnoremap <leader>gb :Gblame<cr>
 nnoremap <leader>gc :Gcommit -v<cr>
 nnoremap <leader>gd :Gdiffsplit<cr>
 nnoremap <leader>gp :Gpush<cr>
-nnoremap <leader>gf :Gfetch<cr>
+nnoremap <leader>gm :Git mergetool<cr>
+" nnoremap <leader>gf :Gfetch<cr>
 
 "" notes
 Plug 'xolox/vim-notes', {'on': ['SearchNotes', 'Note', 'RecentNotes']} | Plug 'xolox/vim-misc'
@@ -388,12 +472,17 @@ Plug 'pearofducks/ansible-vim', { 'for': 'yaml'}
 let g:ansible_unindent_after_newline = 1
 
 "" misc
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
+" Plug 'tpope/vim-surround'
+Plug 'machakann/vim-sandwich'
+" Plug 'tpope/vim-repeat'
 Plug 'triglav/vim-visual-increment'
 
-" Plug 'phux/vim-marker'
-Plug '~/code/vim-marker'
+let g:indent_guides_auto_colors = 0
+Plug 'nathanaelkane/vim-indent-guides'
+
+Plug 'phux/vim-marker'
+let g:MarkerPersistenceDir = '/home/jan/.local/share/vim-marker'
+" Plug '~/code/vim-marker'
 
 " Filetype-specific mappings for [[ and ]]
 Plug 'arp242/jumpy.vim'
@@ -472,7 +561,7 @@ vnoremap <leader>[ :Subvert/<c-R><c-w>/<c-r><c-w>/g<left><left>
 
 """ hardtime
 Plug 'takac/vim-hardtime'
-let g:hardtime_default_on = 1
+let g:hardtime_default_on = 0
 let g:hardtime_ignore_quickfix = 1
 let g:hardtime_maxcount = 1
 let g:hardtime_allow_different_key = 1
@@ -488,6 +577,7 @@ let g:hardtime_timeout = 500
 
 Plug 'ActivityWatch/aw-watcher-vim'
 Plug '~/code/go-analyzer.vim'
+Plug 'Glench/Vim-Jinja2-Syntax'
 call plug#end()
 
 """""""""""""""""""""""
@@ -521,6 +611,11 @@ augroup misc
 
   autocmd! BufWritePost tmux.conf     :silent !tmux source-file ~/.tmux.conf
   autocmd! BufWritePost .tmux.conf    :silent !tmux source-file ~/.tmux.conf
+
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+
+  autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=0
+  autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=8
 augroup END
 
 " https://vim.fandom.com/wiki/Automatically_fitting_a_quickfix_window_height
@@ -532,7 +627,7 @@ endfunction
 augroup nvim
   au!
   au BufWritePost *.vim nested source $MYVIMRC
-  autocmd VimResized * wincmd =
+  " autocmd VimResized * wincmd =
 augroup END
 
 """"""""""""""
@@ -666,20 +761,15 @@ set whichwrap+=<,>,[,],h,l
 set shortmess+=c
 
 " better diffing
-set diffopt+=algorithm:patience
-set diffopt+=indent-heuristic
+" set diffopt+=algorithm:patience
+" set diffopt+=indent-heuristic
 
 let g:lexical#thesaurus = ['~/.config/nvim/thesaurus.txt',]
 let spellfile='~/.vim.spell'
 
 """ colors
-color nord
-set background=dark
-hi Comment ctermfg=gray
-hi BufTabLineCurrent ctermfg=2 ctermbg=8
-hi Visual ctermfg=7 ctermbg=4
-hi Folded ctermfg=4
-hi Search ctermfg=0 ctermbg=10
+" color nord
+" set background=dark
 
 " hi CocFloating ctermbg=18
 
@@ -785,13 +875,26 @@ endfunction
 nnoremap <F4> :call EditFtPluginFile(&filetype)<cr>
 nnoremap <F3> :call EditFtPluginFile('')<left><left>
 
-"" Light color scheme
-function! LightScheme()
-  set background=light
-  color github
-  set cursorline
-  let g:lightline['colorscheme'] = 'github'
-endfunction
+" if (has("termguicolors"))
+"     set termguicolors
+" endif
+if ! exists('g:colors_name')
+    let hour = strftime("%H")
+    if 9 <= hour && hour < 16
+        let g:lightline.colorscheme = 'PaperColor'
+        " set t_Co=256
+        set background=light
+        color PaperColor
+    else
+        set background=dark
+        color nord
+        hi Comment ctermfg=gray
+        hi BufTabLineCurrent ctermfg=2 ctermbg=8
+        hi Visual ctermfg=7 ctermbg=4
+        hi Folded ctermfg=4
+        hi Search ctermfg=0 ctermbg=10
+    endif
+endif
 
 "" unsorted
 nnoremap <silent> <leader>w :w<cr>
@@ -914,26 +1017,25 @@ endfunction
 nnoremap <silent> <leader><f5> :e $MYVIMRC<CR>
 
 " Close all buffers except this one
-command! BufCloseOthers %bd|e#
-" command! -nargs=* Only call CloseHiddenBuffers()
-" function! CloseHiddenBuffers()
-"   " figure out which buffers are visible in any tab
-"   let visible = {}
-"   for t in range(1, tabpagenr('$'))
-"     for b in tabpagebuflist(t)
-"       let visible[b] = 1
-"     endfor
-"   endfor
-"   " close any buffer that are loaded and not visible
-"   let l:tally = 0
-"   for b in range(1, bufnr('$'))
-"     if bufloaded(b) && !has_key(visible, b)
-"       let l:tally += 1
-"       exe 'bw ' . b
-"     endif
-"   endfor
-"   echon 'Deleted ' . l:tally . ' buffers'
-" endfun
+command! -nargs=* Only call CloseHiddenBuffers()
+function! CloseHiddenBuffers()
+  " figure out which buffers are visible in any tab
+  let visible = {}
+  for t in range(1, tabpagenr('$'))
+    for b in tabpagebuflist(t)
+      let visible[b] = 1
+    endfor
+  endfor
+  " close any buffer that are loaded and not visible
+  let l:tally = 0
+  for b in range(1, bufnr('$'))
+    if bufloaded(b) && !has_key(visible, b)
+      let l:tally += 1
+      exe 'bw ' . b
+    endif
+  endfor
+  echon 'Deleted ' . l:tally . ' buffers'
+endfun
 
 " Intelligently navigate tmux panes and Vim splits using the same keys.
 " See https://sunaku.github.io/tmux-select-pane.html for documentation.
@@ -953,15 +1055,16 @@ call coc#add_extension(
             \ 'coc-html',
             \ 'coc-json',
             \ 'coc-lists',
-            \ 'coc-prettier',
             \ 'coc-pyright',
             \ 'coc-sh',
             \ 'coc-snippets',
             \ 'coc-sql',
             \ 'coc-vimlsp',
+            \ 'coc-xml',
             \ 'coc-yaml',
             \ 'coc-yank'
             \ )
+            " \ 'coc-prettier',
 imap <C-j> <Plug>(coc-snippets-expand-jump)
 
 " gherkin: check step usages
@@ -1034,7 +1137,8 @@ let g:ale_fixers = {
 \   'markdown': ['prettier', 'textlint', 'remove_trailing_lines', 'trim_whitespace'],
 \   'text': ['textlint', 'remove_trailing_lines', 'trim_whitespace'],
 \   'go': ['goimports', 'remove_trailing_lines', 'trim_whitespace'],
-\   'python': ['autopep8']
+\   'python': ['autopep8'],
+\   'php': ['remove_trailing_lines', 'trim_whitespace', 'phpcbf']
 \}
 
 nnoremap ' `
@@ -1058,4 +1162,5 @@ function! MoveToEnd()
 endfunction
 
 
-command! MockForInterface execute '!mockery -dir '.expand('%:h').' -name '.expand('<cword>').' -output '.expand('%:h').'/mocks'
+" command! MockForInterface execute '!mockery -dir '.expand('%:h').' -name '.expand('<cword>').' -output '.expand('%:h').'/mocks'
+command! MockForInterface execute '!mockgen -source '.expand('%:t').' -package mocks -destination '.expand('%:h').'/mocks '.expand('<cword>')

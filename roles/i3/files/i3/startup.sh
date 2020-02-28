@@ -4,8 +4,8 @@ xset r rate 300 35
 
 setxkbmap -option caps:escape
 
-~/.i3/wp-changer.sh &
-~/tools/activitywatch/aw-qt &
+~/.config/i3/wp-changer.sh &
+~/Downloads/activitywatch/aw-qt &
 
 xrdb ~/.Xresources
 
@@ -18,8 +18,10 @@ tmuxinator start dotfiles --no-attach
 
 sleep 1; autorandr --change
 
-Joplin-1.0.160-x86_64.AppImage &
+joplin-gui &
 
 blueman-applet &
 
 sleep 5; dropbox start -i
+
+fluxgui &

@@ -17,6 +17,7 @@ URxvt.keyboard-select.clipboard: True
 
 
 *cursorColor: #fb4934
+Xcursor.size: 16
 
 URxvt.letterSpace: -1
 

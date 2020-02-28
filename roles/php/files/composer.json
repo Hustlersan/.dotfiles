@@ -1,16 +1,17 @@
 {
-    "config": {
-        "prestissimo": {
-            "maxConnections": 8,
-            "minConnections": 3
-        }
-    },
-    "minimum-stability": "dev",
-    "require": {
-        "hirak/prestissimo": "dev-master",
-        "felixfbecker/language-server": "dev-master",
-        "phpactor/phpactor": "dev-master",
-        "phpactor/language-server": "^0.2.0@dev"
-    },
-    "require-dev": {}
+  "config": {
+    "prestissimo": {
+      "maxConnections": 8,
+      "minConnections": 3
+    }
+  },
+  "minimum-stability": "dev",
+  "require": {
+    "hirak/prestissimo": "dev-master",
+    "phpactor/phpactor": "dev-master",
+    "phpstan/phpstan": "@stable",
+    "phpmd/phpmd": "@stable",
+    "squizlabs/php_codesniffer": "@stable"
+  },
+  "require-dev": {}
 }
