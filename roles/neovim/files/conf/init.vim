@@ -129,17 +129,17 @@ let g:go_addtags_transform = 'snakecase'
 let g:go_doc_keywordprg_enabled = 0
 let g:go_echo_go_info = 0
 
-let g:go_highlight_extra_types = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_variable_assignments = 1
+" let g:go_highlight_extra_types = 1
+" let g:go_highlight_operators = 1
+" let g:go_highlight_variable_assignments = 1
 " let g:go_highlight_variable_declarations = 1
 " let g:go_highlight_format_strings = 1
 " let g:go_highlight_generate_tags = 1
 " let g:go_highlight_types=1
-let g:go_highlight_functions=1
+" let g:go_highlight_functions=1
 " let g:go_highlight_function_calls=1
-let g:go_highlight_function_parameters=1
-let g:go_highlight_fields=1
+" let g:go_highlight_function_parameters=1
+" let g:go_highlight_fields=1
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " Plug 'arp242/gopher.vim', {'for': 'go'}
 " let g:gopher_map = 0
@@ -481,7 +481,7 @@ let g:indent_guides_auto_colors = 0
 Plug 'nathanaelkane/vim-indent-guides'
 
 Plug 'phux/vim-marker'
-let g:MarkerPersistenceDir = '/home/jan/.local/share/vim-marker'
+let g:MarkerPersistenceDir = fnamemodify('~/.local/share/vim-marker', ':p')
 " Plug '~/code/vim-marker'
 
 " Filetype-specific mappings for [[ and ]]
@@ -1055,6 +1055,7 @@ call coc#add_extension(
             \ 'coc-html',
             \ 'coc-json',
             \ 'coc-lists',
+            \ 'coc-phpls',
             \ 'coc-pyright',
             \ 'coc-sh',
             \ 'coc-snippets',
@@ -1164,3 +1165,18 @@ endfunction
 
 " command! MockForInterface execute '!mockery -dir '.expand('%:h').' -name '.expand('<cword>').' -output '.expand('%:h').'/mocks'
 command! MockForInterface execute '!mockgen -source '.expand('%:t').' -package mocks -destination '.expand('%:h').'/mocks '.expand('<cword>')
+
+function! PhpConstructorArgumentMagic()
+    " update phpdoc
+    if exists("*UpdatePhpDocIfExists")
+        normal! gg
+        /__construct
+        normal! n
+        :call UpdatePhpDocIfExists()
+        :w
+    endif
+    sleep 500m
+    :call PHPModify("complete_constructor")
+    " sleep 500m
+    :e
+endfunction

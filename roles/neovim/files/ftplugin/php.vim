@@ -20,17 +20,17 @@ nnoremap <buffer> gn :call phpactor#Navigate()<CR>
 
 nnoremap <buffer> <silent> <leader>W :w<cr>
 nnoremap <buffer> <m-f> :call PHPUnitSetupMethod()<cr>
-nnoremap <buffer> <leader>rrp :call PhpRenameClassVariable()<CR>
-nnoremap <buffer> <leader>rrm :call PhpRenameMethod()<CR>
-nnoremap <buffer> <leader>rlv :call PhpRenameLocalVariable()<CR>
-nnoremap <buffer> <leader>reu :call PhpExtractUse()<CR>
-vnoremap <buffer> <leader>rec :call PhpExtractConst()<CR>
-nnoremap <buffer> <leader>rep :call PhpExtractClassProperty()<cr>
-vnoremap <silent><Leader>em :<C-U>call phpactor#ExtractMethod()<CR>
+
+nnoremap <buffer> <leader>eu :call PhpExtractUse()<CR>
+vnoremap <buffer> <leader>ec :call PhpExtractConst()<CR>
+nnoremap <buffer> <leader>ep :call PhpExtractClassProperty()<cr>
+vnoremap <silent> <leader>em :<C-U>call phpactor#ExtractMethod()<CR>
 vnoremap <buffer> <silent><Leader>ee :<C-U>call phpactor#ExtractExpression(v:true)<CR>
 nnoremap <buffer> <silent><Leader>ee :call phpactor#ExtractExpression(v:false)<CR>
-nnoremap <buffer> <leader>H :call PhpConstructorArgumentMagic2()<cr>
-nnoremap <buffer> <leader>rcc :call PhpConstructorArgumentMagic()<cr>:sleep 300m<cr>:e<cr>
+" nnoremap <buffer> <leader>H :call PhpConstructorArgumentMagic2()<cr>
+" nnoremap <buffer> <leader>rcc :call PhpConstructorArgumentMagic()<cr>
+" nnoremap <buffer> <leader>H :call PHPModify('complete_constructor')<cr>
+nnoremap <buffer> <silent><leader>H :call PhpConstructorArgumentMagic()<cr>
 nnoremap <buffer> <leader>rmc :call PHPMoveClass()<cr>
 nnoremap <buffer> <leader>rmd :call PHPMoveDir()<cr>
 nnoremap <buffer> <m-n> :call phpactor#ContextMenu()<cr>
@@ -49,9 +49,11 @@ let g:ale_php_phpstan_executable = 'vendor/bin/phpstan'
 let g:ale_php_phpstan_configuration = 'phpstan.neon'
 let g:ale_php_phpstan_level = 'max'
 let g:ale_php_phpcbf_standard='~/.phpcs.xml'
-let g:ale_php_phpcbf_standard='~/.phpcs.xml'
-" let g:ale_php_phpcbf_standard='Symfony'
 let g:ale_php_phpcs_standard='~/.phpcs.xml'
+if !filereadable('~/.phpcs.xml')
+    let g:ale_php_phpcbf_standard='Symfony'
+    let g:ale_php_phpcs_standard='Symfony'
+endif
 let g:ale_php_phpmd_ruleset='~/.phpmd.xml'
 let g:ultisnips_php_scalar_types = 1
 let g:PHP_removeCRwhenUnix = 1
@@ -80,19 +82,6 @@ let g:vim_php_refactoring_default_method_visibility = 'private'
 let g:vim_php_refactoring_auto_validate_visibility = 1
 let g:vim_php_refactoring_use_default_mapping = 0
 let g:vim_php_refactoring_phpdoc = "pdv#DocumentCurrentLine"
-
-function! PhpConstructorArgumentMagic()
-    " update phpdoc
-    if exists("*UpdatePhpDocIfExists")
-        normal! gg
-        /__construct
-        normal! n
-        :call UpdatePhpDocIfExists()
-        :w
-    endif
-    :call PHPModify("complete_constructor")
-endfunction
-
 
 function! PhpConstructorArgumentMagic2()
     let l:currentLine = getline('.')
@@ -337,3 +326,24 @@ if !exists("*SymfonySwitchToAlternateFile")
   endfunction
 endif
 " }}}
+
+
+function! PHPRename()
+    let l:line = getline('.')
+    let l:is_member = expand('<cWORD>') =~# '\$this->'.expand('<cword>')
+    if is_member
+        if l:line !~# expand('<cword>').'('
+            call PhpRenameClassVariable()
+        else
+            call PhpRenameMethod()
+        endif
+    elseif l:line =~# ' function ' && expand('<cWORD>') !~# '^\$'
+        call PhpRenameMethod()
+    elseif l:line =~# 'private\|protected\|public \$'
+        call PhpRenameClassVariable()
+    elseif l:line =~# '$'.expand('<cword>')
+        call PhpRenameLocalVariable()
+    endif
+endfunction
+
+nmap <leader>gr :call PHPRename()<cr>

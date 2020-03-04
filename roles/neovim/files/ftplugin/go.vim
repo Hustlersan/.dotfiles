@@ -1,4 +1,4 @@
-setlocal noexpandtab tabstop=4 shiftwidth=4
+setlocal noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
 setlocal nofoldenable
 setlocal foldmethod=syntax
 setlocal foldlevel=1
@@ -11,7 +11,11 @@ augroup end
 
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gD <Plug>(coc-type-definition)
-let b:ale_linters = ['gobuild', 'golangci-lint', 'revive']
+if !IsOnBattery
+    let b:ale_linters = ['gobuild', 'golangci-lint', 'revive']
+else
+    let b:ale_linters = ['gobuild', 'golangci-lint']
+endif
 " let b:ale_linters = []
 let g:ale_go_golangci_lint_package=1
 let g:ale_go_staticcheck_lint_package=1

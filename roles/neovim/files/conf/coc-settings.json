@@ -1,19 +1,4 @@
 {
-  "languageserver": {
-    "intelephense": {
-      "command": "intelephense",
-      "args": ["--stdio"],
-      "filetypes": ["php"],
-      "initializationOptions": {
-        "storagePath": "/tmp/intelephense"
-      }
-    },
-    "terraform": {
-      "command": "terraform-lsp",
-      "filetypes": ["terraform"],
-      "initializationOptions": {}
-    }
-  },
   "suggest.snippetIndicator": " ►",
   "suggest.echodocSupport": false,
   "suggest.detailField": "abbr",
