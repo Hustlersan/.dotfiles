@@ -8,7 +8,7 @@ fi
 
 # zmodload zsh/zprof
 
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!.git/" -g "!node_modules" -g "!*/vendor/*" -g "!assets/" -g "!composer.lock" 2> /dev/null'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --smart-case --hidden --follow -g "!.git/" -g "!node_modules" -g "!*/vendor/*" -g "!assets/" -g "!composer.lock" 2> /dev/null'
 
 export FZF_BIN_PATH="$HOME/.fzf/bin"
 
